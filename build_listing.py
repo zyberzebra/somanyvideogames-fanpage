@@ -79,36 +79,79 @@ def generate_html(eps):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>So Videogames Podcast – Episodes</title>
 <style>
+:root {{
+  color-scheme: dark;
+  --bg: #111;
+  --fg: #ccc;
+  --border: #2a2a2a;
+  --link: #7cb4f7;
+  --muted: #777;
+  --tog: #888;
+  --mark-bg: #554400;
+  --card-bg: #181818;
+}}
+.light {{
+  color-scheme: light;
+  --bg: #fff;
+  --fg: #222;
+  --border: #ddd;
+  --link: #1a0dab;
+  --muted: #888;
+  --tog: #666;
+  --mark-bg: #ffe066;
+  --card-bg: #fafafa;
+}}
 * {{ box-sizing: border-box; }}
-body {{ font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 1rem; }}
+body {{ font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 1rem; background: var(--bg); color: var(--fg); }}
 h1 {{ font-size: 1.5rem; }}
-#search {{ width: 100%; padding: 0.75rem; font-size: 1.2rem; margin-bottom: 0.5rem; box-sizing: border-box; }}
-.ep {{ margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #ddd; }}
+#search {{ width: 100%; padding: 0.75rem; font-size: 1.2rem; margin-bottom: 0.5rem; box-sizing: border-box; background: var(--card-bg); color: var(--fg); border: 1px solid var(--border); border-radius: 6px; }}
+.ep {{ margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }}
 .ep-title {{ font-size: 1.1rem; font-weight: bold; }}
-.ep-title a {{ color: #1a0dab; text-decoration: none; }}
+.ep-title a {{ color: var(--link); text-decoration: none; }}
 .ep-title a:hover {{ text-decoration: underline; }}
-.ep-date {{ color: #666; font-size: 0.85rem; margin: 0.15rem 0 0.5rem 0; }}
+.ep-date {{ color: var(--muted); font-size: 0.85rem; margin: 0.15rem 0 0.5rem 0; }}
 .desc {{ margin-top: 0.4rem; font-size: 0.9rem; line-height: 1.6; display: none; overflow-wrap: break-word; }}
 .desc.vis {{ display: block; }}
 .desc p {{ margin: 0.5em 0; }}
 .desc ul, .desc ol {{ margin: 0.3em 0; padding-left: 1.5rem; }}
 .desc li {{ margin: 0.15em 0; }}
-.desc a {{ color: #1a0dab; }}
-.tog {{ color: #666; cursor: pointer; font-size: 0.85rem; user-select: none; }}
-.tog:hover {{ text-decoration: underline; }}
-.meta {{ color: #888; font-size: 0.85rem; margin-bottom: 1rem; }}
-mark {{ background: #ffe066; }}
-.footer {{ margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }}
+.desc a {{ color: var(--link); }}
+.tog {{ color: var(--tog); cursor: pointer; font-size: 0.85rem; user-select: none; }}
+.tog:hover {{ text-decoration: underline; color: var(--fg); }}
+.meta {{ color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }}
+mark {{ background: var(--mark-bg); color: inherit; }}
+.footer {{ margin-top: 2rem; font-size: 0.8rem; color: var(--muted); text-align: center; }}
+.footer a {{ color: var(--link); }}
+.header {{ display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }}
+#theme {{ background: none; border: 1px solid var(--border); color: var(--fg); cursor: pointer; font-size: 0.9rem; padding: 0.3rem 0.6rem; border-radius: 5px; white-space: nowrap; }}
+#theme:hover {{ background: var(--card-bg); }}
 </style>
 </head>
 <body>
-<h1>So Videogames Podcast – Episodes</h1>
+<div class="header">
+  <h1>So Videogames Podcast – Episodes</h1>
+  <button id="theme">☀ Light</button>
+</div>
 <input type="text" id="search" placeholder="Search titles and descriptions…" autofocus>
 <p class="meta" id="count"></p>
 <div id="results"></div>
 <div class="footer">{len(eps)} / {EXPECTED_EPISODES} episodes · data from <a href="https://gamecritics.com/category/podcasts/so-videogames/">gamecritics.com</a></div>
 <script>
 const episodes = {data_json};
+
+(function initTheme() {{
+  const t = document.getElementById('theme');
+  if (localStorage.getItem('theme') === 'light') {{
+    document.documentElement.classList.add('light');
+    t.textContent = '☾ Dark';
+  }}
+  t.onclick = function() {{
+    document.documentElement.classList.toggle('light');
+    const isLight = document.documentElement.classList.contains('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    t.textContent = isLight ? '☾ Dark' : '☀ Light';
+  }};
+}})();
 
 function filter() {{
   const q = document.getElementById('search').value.toLowerCase().trim();
