@@ -225,5 +225,7 @@ if __name__ == "__main__":
     html_out = generate_html(eps)
     with open("listing.html", "w") as f:
         f.write(html_out)
+    with open("index.html", "w") as f:
+        f.write(html_out)
 
     print(f"Done. {len(eps)} episodes ({len(html_out)} bytes)")
